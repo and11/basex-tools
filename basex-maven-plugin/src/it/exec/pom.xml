@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <artifactId>test</artifactId>
+    <groupId>test</groupId>
+    <version>1.0-SNAPSHOT</version>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@pom.groupId@</groupId>
+                <artifactId>@pom.artifactId@</artifactId>
+                <version>@pom.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <provision>
+                                <repositories>
+                                    <!--<descriptor>xar:mvn:///</descriptor>-->
+                                    <!--<repository>jar+file:///${project.build.directory}/${project.build.finalName}.jar</repository>-->
+                                    <repository>xqm+file:///${project.build.directory}/classes/my-functions.xqm</repository>
+                                    <!--<descriptor>doc:depset:123123</descriptor>-->
+                                </repositories>
+                                <!--<documents>-->
+                                    <!--<document></document>-->
+                                <!--</documents>-->
+                            </provision>
+                            <functions>
+                                <function>
+                                    <namespace>urn:test.functions</namespace>
+                                    <name>test</name>
+                                    <!--<arguments>-->
+                                        <!--<argument>wqwe</argument>-->
+                                        <!--<argument>wqwe</argument>-->
+                                    <!--</arguments>-->
+                                    <output>somefile.txt</output>
+                                    <mode>xml</mode>
+                                </function>
+                            </functions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <!--<configuration>-->
+                    <!--<dependencySets>-->
+                        <!--<dependencySet>-->
+                            <!--<id>asdasd</id>-->
+                            <!--<includes>-->
+                                <!--<include>a</include>-->
+                                <!--<include>b</include>-->
+                            <!--</includes>-->
+                        <!--</dependencySet>-->
+                        <!--<dependencySet>-->
+                            <!--<id>asdasd</id>-->
+                            <!--<includes>-->
+                                <!--<include>a</include>-->
+                                <!--<include>b</include>-->
+                            <!--</includes>-->
+                        <!--</dependencySet>-->
+                    <!--</dependencySets>-->
+                <!--</configuration>-->
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
