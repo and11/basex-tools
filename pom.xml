@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>basex-test</module>
+        <module>basex-junit</module>
         <module>basex-maven-plugin</module>
         <module>basex-utils</module>
         <module>basex-tools-demo</module>
