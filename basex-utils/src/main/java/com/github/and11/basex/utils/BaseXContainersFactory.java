@@ -1,5 +1,7 @@
 package com.github.and11.basex.utils;
 
+import com.github.and11.basex.utils.options.InitializationOption;
+
 public interface BaseXContainersFactory {
-    BaseXContainer createContainer(Option[] options) throws BaseXContainer.BaseXContainerException;
+    BaseXContainer createContainer(InitializationOption... options) throws BaseXContainer.BaseXContainerException;
 }

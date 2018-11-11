@@ -1,5 +1,7 @@
 package com.github.and11.basex.utils.options;
 
+import com.github.and11.basex.utils.FunctionUtils;
+import com.github.and11.basex.utils.UrlStreamHandler;
 import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
@@ -17,15 +19,35 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.and11.basex.utils.FunctionUtils.composeUrl;
+
 public class DefaultFunctionUrlReference implements FunctionUrlReference {
 
     private String name;
     private String namespace;
+    private String mode = "xml";
     private String[] arguments;
+
+    public DefaultFunctionUrlReference() {
+    }
+
+    public DefaultFunctionUrlReference(UrlReference url) throws IOException, UrlStreamHandler.UnresolvableUrlException {
+        FunctionUtils.Function descriptor = FunctionUtils.parseUrl(url.getURL());
+        name = descriptor.getName();
+        namespace = descriptor.getNamespace();
+        mode = descriptor.getMode();
+        arguments  =descriptor.getArguments();
+    }
 
     @Override
     public FunctionUrlReference name(String name) {
         this.name = name;
+        return this;
+    }
+
+    @Override
+    public FunctionUrlReference mode(String mode) {
+        this.mode = mode;
         return this;
     }
 
@@ -41,6 +63,7 @@ public class DefaultFunctionUrlReference implements FunctionUrlReference {
         return this;
     }
 
+
     @Override
     public String toString() {
         return "DefaultFunctionUrlReference{" +
@@ -50,60 +73,9 @@ public class DefaultFunctionUrlReference implements FunctionUrlReference {
                 '}';
     }
 
-    static String writeFunctionArguments(String... args) {
-        try (ByteArrayOutputStream stream = new ByteArrayOutputStream();
-             OutputStreamWriter oWriter = new OutputStreamWriter(stream);
-             ) {
-
-            CSVWriter writer = new CSVWriter(oWriter, ';', '"');
-            writer.writeNext(args,false);
-            writer.close();
-
-            return stream.toString(StandardCharsets.UTF_8.name());
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    static List<String> readFunctionArguments(String args) throws IOException {
-        CSVParser parser = new CSVParserBuilder()
-                .withSeparator(';')
-                .build();
-
-        try (ByteArrayInputStream is = new ByteArrayInputStream(args.getBytes(StandardCharsets.UTF_8))) {
-            CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(is))
-                    .withSkipLines(0)
-                    .withCSVParser(parser)
-                    .build();
-
-            List<String[]> res = csvReader.readAll();
-
-            return Arrays.asList(res.get(0));
-        }
-
-
-    }
-
-    public static void main(String[] args) throws IOException {
-
-        List<String> fa = readFunctionArguments("a;b;c");
-        System.out.println("args: " + fa);
-
-        System.out.println("res: " +writeFunctionArguments("a","b" ,"e;d"));
-    }
-
 
     @Override
     public String getURL() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("xqf:")
-                .append(namespace)
-                .append("/")
-                .append(name);
-
-        return sb.toString();
+        return composeUrl(namespace, name, mode, arguments);
     }
-
 }

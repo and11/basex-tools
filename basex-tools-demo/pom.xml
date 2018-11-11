@@ -16,6 +16,7 @@
         <module>xunit</module>
         <module>db</module>
         <module>schemas</module>
+        <module>xml</module>
     </modules>
 
 

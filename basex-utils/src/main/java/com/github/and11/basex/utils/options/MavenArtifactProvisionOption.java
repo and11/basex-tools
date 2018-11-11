@@ -58,7 +58,7 @@ public class MavenArtifactProvisionOption
     {
         m_artifact.groupId( groupId );
         m_updateUsed = false;
-        return itself();
+        return this;
     }
 
     /**
@@ -67,7 +67,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption artifactId( final String artifactId )
     {
         m_artifact.artifactId( artifactId );
-        return itself();
+        return this;
     }
 
     /**
@@ -76,7 +76,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption type( final String type )
     {
         m_artifact.type( type );
-        return itself();
+        return this;
     }
 
     /**
@@ -85,7 +85,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption classifier( String classifier )
     {
         m_artifact.classifier( classifier );
-        return itself();
+        return this;
     }
 
     /**
@@ -94,7 +94,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption version( final String version )
     {
         m_artifact.version( version );
-        return itself();
+        return this;
     }
 
     /**
@@ -103,7 +103,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption version( final MavenArtifactUrlReference.VersionResolver resolver )
     {
         m_artifact.version( resolver );
-        return itself();
+        return this;
     }
 
     /**
@@ -112,7 +112,7 @@ public class MavenArtifactProvisionOption
     public MavenArtifactProvisionOption versionAsInProject()
     {
         m_artifact.versionAsInProject();
-        return itself();
+        return this;
     }
 
     /**
@@ -139,14 +139,6 @@ public class MavenArtifactProvisionOption
     public String toString()
     {
         return m_artifact.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected MavenArtifactProvisionOption itself()
-    {
-        return this;
     }
 
 }

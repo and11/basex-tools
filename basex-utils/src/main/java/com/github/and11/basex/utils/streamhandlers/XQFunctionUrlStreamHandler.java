@@ -1,6 +1,7 @@
-package com.github.and11.basex.utils.resolvers;
+package com.github.and11.basex.utils.streamhandlers;
 
 import com.github.and11.basex.utils.BaseXContainer;
+import com.github.and11.basex.utils.FunctionUtils;
 import com.github.and11.basex.utils.UrlStreamHandler;
 import org.basex.query.QueryException;
 import org.basex.query.QueryProcessor;
@@ -30,24 +31,32 @@ public class XQFunctionUrlStreamHandler implements UrlStreamHandler {
 
     @Override
     public InputStream openStream(String url) throws UnresolvableUrlException {
-
-        String[] parts = url.replaceFirst("xqf:", "").split("/");
-        String namespace = parts[0];
-        String name = parts[1];
-        String outputMethod = "xml";
-
-        String func = composeFunction(namespace, name);
-        QueryProcessor qp = basexContext.buildQueryProcessor(func);
-
+        System.out.println("executing url " + url);
         try {
-            Path temp = Files.createTempFile(UUID.randomUUID().toString(), ".tmp");
+            System.out.println("parsing url");
+            FunctionUtils.Function function = FunctionUtils.parseUrl(url);
+            System.out.println("parsed: " + function);
+            String func = composeFunction(function.getNamespace(), function.getName(), function.getArguments());
+            System.out.println("composed function: " + func);
+            QueryProcessor qp = basexContext.buildQueryProcessor(func);
+            Path temp = Files.createTempFile(UUID.randomUUID().toString(), ".xqf");
             qp.bind("targetFile", temp.toFile().getAbsolutePath());
-            qp.bind("outputMethod", outputMethod);
+            qp.bind("outputMethod", function.getMode());
+
+            if(function.getArguments() != null){
+                String[] args = function.getArguments();
+                for( int i=0; i < args.length; i++){
+                    qp.bind("v"+i, args[i]);
+                }
+            }
+
             Value result = qp.value();
             return Files.newInputStream(temp, StandardOpenOption.DELETE_ON_CLOSE);
         } catch (IOException e) {
+            System.out.println("io exception: " + e);
             throw new UnresolvableUrlException(url, e);
         } catch (QueryException e) {
+            System.out.println("query exception: " + e);
             throw new UnresolvableUrlException(url, e);
         }
     }
@@ -62,9 +71,11 @@ public class XQFunctionUrlStreamHandler implements UrlStreamHandler {
 
 
         List<String> arguments = new ArrayList<>();
-        for (int i = 0; i < args.length; i++) {
-            sb.append("declare variable v").append(i).append(" external;\n");
-            arguments.add("v" + i);
+        if(args != null) {
+            for (int i = 0; i < args.length; i++) {
+                sb.append("declare variable $v").append(i).append(" external;\n");
+                arguments.add("$v" + i);
+            }
         }
 
         sb.append("file:write($targetFile, mns:%s(%s),\n")
@@ -76,7 +87,7 @@ public class XQFunctionUrlStreamHandler implements UrlStreamHandler {
                 .append("</output:serialization-parameters>")
                 .append(")");
 
-            return String.format(sb.toString(), namespace, name, String.join(",", arguments)
+        return String.format(sb.toString(), namespace, name, String.join(",", arguments)
 
         );
 

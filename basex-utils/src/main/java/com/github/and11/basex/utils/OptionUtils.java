@@ -15,9 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.and11.basex.utils.options;
+package com.github.and11.basex.utils;
 
 import com.github.and11.basex.utils.Option;
+import com.github.and11.basex.utils.options.CompositeOption;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -33,25 +34,14 @@ import java.util.List;
 public class OptionUtils
 {
 
-    /**
-     * Utility class. Ment to be used via the static factory methods.
-     */
     private OptionUtils()
     {
         // utility class
     }
 
-    /**
-     * Expand options to one level by expanding eventual {@link CompositeOption}. During this process null options are
-     * eliminated.
-     *
-     * @param options options to be expanded (can be null or an empty array)
-     *
-     * @return expanded options (never null). In case that the options to be expanded is null an empty array is returned
-     */
     public static Option[] expand(final Option... options )
     {
-        final List<Option> expanded = new ArrayList<Option>();
+        final List<Option> expanded = new ArrayList<>();
         if( options != null )
         {
             for( Option option : options )
@@ -72,15 +62,6 @@ public class OptionUtils
         return expanded.toArray( new Option[expanded.size()] );
     }
 
-    /**
-     * Combines two arrays of options in one array containing both provided arrays in order they are provided.
-     *
-     * @param options1 array of options (can be null or empty array)
-     * @param options2 array of options (can be null or empty array)
-     *
-     * @return combined array of options (never null). In case that both arrays are null or empty an empty array is
-     *         returned
-     */
     public static Option[] combine( final Option[] options1,
                                     final Option... options2 )
     {
@@ -106,17 +87,6 @@ public class OptionUtils
         return combined;
     }
 
-    /**
-     * Filters the provided options by class returning an array of those option that are instance of the provided class.
-     * Before filtering the options are expanded {@link #expand(Option[])}.
-     *
-     * @param optionType class of the desired options
-     * @param options    options to be filtered (can be null or empty array)
-     * @param <T>        type of desired options
-     *
-     * @return array of desired option type (never null). In case that the array of filtered options is null, empty or
-     *         there is no option that matches the desired type an empty array is returned
-     */
     @SuppressWarnings( "unchecked" )
     public static <T extends Option> T[] filter( final Class<T> optionType,
                                                  final Option... options )
@@ -132,16 +102,6 @@ public class OptionUtils
         final T[] result = (T[]) Array.newInstance( optionType, filtered.size() );
         return filtered.toArray( result );
     }
-
-    /**
-     * Removes from the provided options all options that are instance of the provided class, returning the remaining
-     * options.
-     *
-     * @param optionType class of the desired options to be removed
-     * @param options    options to be filtered (can be null or empty array)
-     *
-     * @return array of remaining options (never null) after removing the desired type
-     */
 
     public static Option[] remove( final Class<? extends Option> optionType,
                                    final Option... options )

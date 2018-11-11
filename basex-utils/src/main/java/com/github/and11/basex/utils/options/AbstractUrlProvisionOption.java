@@ -17,67 +17,27 @@
  */
 package com.github.and11.basex.utils.options;
 
-/**
- * Option specifying a provision url.
- *
- * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 0.5.0, April 26, 2009
- */
 public abstract class AbstractUrlProvisionOption<T extends AbstractUrlProvisionOption>
     extends AbstractProvisionOption<T>
 {
 
-    /**
-     * Provision url (cannot be null).
-     */
     private final UrlReference m_urlReference;
 
-    /**
-     * Constructor.
-     *
-     * @param url provision url (cannot be null or empty)
-     *
-     * @throws IllegalArgumentException - If url is null or empty
-     */
     public AbstractUrlProvisionOption(final String url )
     {
         this( new RawUrlReference( url ) );
     }
 
-    /**
-     * Constructor.
-     *
-     * @param url provision url (cannot be null)
-     *
-     * @throws IllegalArgumentException - If url is null
-     */
     public AbstractUrlProvisionOption(final UrlReference url )
     {
-     //   validateNotNull( url, "URL" );
         m_urlReference = url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public String getURL()
     {
         return m_urlReference.getURL();
     }
 
-    /**
-     * Getter.
-     *
-     * @return url reference
-     */
-    public UrlReference getUrlReference()
-    {
-        return m_urlReference;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString()
     {

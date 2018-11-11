@@ -1,4 +1,4 @@
-package com.github.and11.basex.utils.resolvers;
+package com.github.and11.basex.utils.streamhandlers;
 
 import com.github.and11.basex.utils.UrlStreamHandler;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;

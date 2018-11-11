@@ -22,49 +22,52 @@
                         </goals>
                         <configuration>
                             <provision>
-                                <repositories>
-                                    <!--<descriptor>xar:mvn:///</descriptor>-->
-                                    <!--<repository>jar+file:///${project.build.directory}/${project.build.finalName}.jar</repository>-->
-                                    <repository>xqm+file:///${project.build.directory}/classes/my-functions.xqm</repository>
-                                    <!--<descriptor>doc:depset:123123</descriptor>-->
-                                </repositories>
-                                <!--<documents>-->
-                                    <!--<document></document>-->
-                                <!--</documents>-->
+                                <defaultCollectionName>test</defaultCollectionName>
+                                <databaseName>mydb</databaseName>
+                                <descriptors>
+                                    <descriptor>repo:file:///${project.build.directory}/classes/my-functions.xqm@xqm</descriptor>
+                                    <descriptor>doc:file:///${project.build.directory}/classes/data.xml@other</descriptor>
+                                    <descriptor>doc:file:///${project.build.directory}/classes/data.xml</descriptor>
+                                    <descriptor>doc:xqf:xml:http://some/namespace#test@other</descriptor>
+                                </descriptors>
                             </provision>
                             <functions>
                                 <function>
-                                    <namespace>urn:test.functions</namespace>
-                                    <name>test</name>
-                                    <!--<arguments>-->
-                                        <!--<argument>wqwe</argument>-->
-                                        <!--<argument>wqwe</argument>-->
-                                    <!--</arguments>-->
-                                    <output>somefile.txt</output>
-                                    <mode>xml</mode>
+                                    <descriptor>xqf:xml:http://some/namespace#getFromDatas</descriptor>
+                                    <arguments>
+                                        <argument>mydb/other</argument>
+                                    </arguments>
+                                    <output>${project.build.directory}/datas1.xml</output>
+                                </function>
+                                <function>
+                                    <descriptor>xqf:xml:http://some/namespace#getFromDatas</descriptor>
+                                    <arguments>
+                                        <argument>mydb/test</argument>
+                                    </arguments>
+                                    <output>${project.build.directory}/datas2.xml</output>
                                 </function>
                             </functions>
                         </configuration>
                     </execution>
                 </executions>
-                <!--<configuration>-->
-                    <!--<dependencySets>-->
-                        <!--<dependencySet>-->
-                            <!--<id>asdasd</id>-->
-                            <!--<includes>-->
-                                <!--<include>a</include>-->
-                                <!--<include>b</include>-->
-                            <!--</includes>-->
-                        <!--</dependencySet>-->
-                        <!--<dependencySet>-->
-                            <!--<id>asdasd</id>-->
-                            <!--<includes>-->
-                                <!--<include>a</include>-->
-                                <!--<include>b</include>-->
-                            <!--</includes>-->
-                        <!--</dependencySet>-->
-                    <!--</dependencySets>-->
-                <!--</configuration>-->
+                <configuration>
+                    <dependencySets>
+                        <dependencySet>
+                            <id>asdasd</id>
+                            <includes>
+                                <include>a</include>
+                                <include>b</include>
+                            </includes>
+                        </dependencySet>
+                        <dependencySet>
+                            <id>asdasd</id>
+                            <includes>
+                                <include>a</include>
+                                <include>b</include>
+                            </includes>
+                        </dependencySet>
+                    </dependencySets>
+                </configuration>
             </plugin>
         </plugins>
     </build>

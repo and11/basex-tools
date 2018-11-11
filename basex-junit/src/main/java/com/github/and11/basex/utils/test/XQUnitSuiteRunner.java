@@ -28,6 +28,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
     public static final Logger logger = LoggerFactory.getLogger(XQUnitSuiteRunner.class);
 
     private final Description description;
+    private final BaseXContainer container;
 
     @Override
     public String toString() {
@@ -37,25 +38,6 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
                 '}';
     }
 
-//    private Optional<String> getSuiteName(Class<?> clazz) {
-//        Annotation[] annotations = clazz.getAnnotations();
-//        for (Annotation annotation : annotations) {
-//            if (annotation instanceof XQUnitSuiteName) {
-//                XQUnitSuiteName sn = (XQUnitSuiteName) annotation;
-//                return Optional.of(sn.name());
-//            }
-//        }
-//
-//        return Optional.empty();
-//    }
-
-    private void printClasspath(ClassLoader cl) {
-        URL[] urls = ((URLClassLoader) cl).getURLs();
-
-        for (URL url : urls) {
-            System.out.println("clpath: " + url.getFile());
-        }
-    }
 
     private List<Option> getConfigurationOptions(Class<?> testClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         final Object testInstance = testClass.newInstance();
@@ -71,7 +53,6 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
                             && configMethod.getParameterTypes().length == 0
                             && configMethod.getReturnType().isArray()
                             && Option.class.isAssignableFrom(configMethod.getReturnType().getComponentType())) {
-                System.out.println("found config method: " + configMethod);
                 options.addAll(Arrays.asList((Option[]) configMethod.invoke(testInstance, null)));
             }
         }
@@ -89,37 +70,11 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
         super(null);
 
         List<Option> options = new ArrayList<>();
-//        Optional<String> suiteName = getSuiteName(testClass);
         try {
             options.addAll(getConfigurationOptions(testClass));
-            System.out.println("options: ");
-            for (Option option : options) {
-                System.out.println("op: " + option);
-            }
         } catch (Exception e) {
             throw new InitializationError(e);
         }
-
-        //System.out.println("class = " + testClass + ", resource: " + testClass.getResource("/mytest.txt"));
-
-//        URL suitesDesc = testClass.getClassLoader().getResource(resourceName);
-//
-//        if(suitesDesc == null){
-//            logger.error("can't load resource {}", resourceName);
-//            throw new InitializationError("can't find testsuite descriptor");
-//        }
-//
-//        Properties props = new Properties();
-//        try (InputStream is = suitesDesc.openStream()) {
-//            props.load(is);
-//        } catch (IOException e) {
-//            logger.error("can't load properties by URL {}: {}", suitesDesc, e);
-//            throw new RuntimeException("can't read properties", e);
-//        }
-//
-//        String dbName = props.getProperty("dbname");
-//        String dbPath = props.getProperty("dbpath");
-//        String tsuiteName = props.getProperty("suitename");
 
         description = Description.createSuiteDescription(testClass.getCanonicalName());
 
@@ -130,45 +85,17 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
         } catch (BaseXContainer.BaseXContainerException e) {
             throw new RuntimeException(e);
         }
-//
-//        String tests = props.getProperty("tests");
-//        BasexContext ctx = BasexCachedContexts.openDatabase(new File(dbPath).toPath(), dbName);
-//        this.ctx = ctx;
-//        String[] testsList = tests.split(",");
 
         String[] testsList = getTests(testClass);
-        System.out.println("tests: " + Arrays.asList(testsList));
 
         for (String testPath : testsList) {
-            System.out.println("testPath: " + testPath);
             XQUnitTestRunner runner = new XQUnitTestRunner(container, testPath);
-            logger.info("registering tests runner: {}", runner);
             children.add(runner);
         }
-//
+
+        this.container = container;
     }
 
-//    public XQUnitSuiteRunner(Properties props, BasexContext ctx) throws InitializationError {
-//        super(null);
-//
-//        System.out.println("BBBBBBBBBBBBBBBBBBB");
-//        String suiteName = props.getProperty("suitename");
-//        description = Description.createSuiteDescription(suiteName);
-//
-//        String tests = props.getProperty("tests");
-//
-//        //System.out.println("initizlized XQUnitSuiteRunner, props: " + props);
-//        //this.ctx = ctx;
-//
-//        String[] testsList = tests.split(",");
-//
-////        for (String testPath : testsList) {
-////            XQUnitTestRunner runner = new XQUnitTestRunner(this.ctx, new File(testPath));
-////            logger.info("registering tests runner: {}", runner);
-////            children.add(runner);
-////        }
-//
-//    }
 
     private List<XQUnitTestRunner> children = new ArrayList<>();
 
@@ -198,6 +125,8 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
 
     @Override
     public void close() throws Exception {
-        //ctx.close();
+        if(container != null){
+            container.close();
+        }
     }
 }

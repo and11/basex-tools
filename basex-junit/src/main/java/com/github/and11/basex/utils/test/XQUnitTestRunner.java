@@ -59,10 +59,6 @@ public class XQUnitTestRunner extends ParentRunner<XQUnitTestRunner.OneTest> {
     @Override
     public void run(RunNotifier notifier) {
 
-        System.out.println("RUNNING TEST");
-
-//        String suiteName = new File(file.getName()).getName().replaceAll("\\.xq$", "");
-
         Description suiteDesc = Description.createSuiteDescription(file);
 
         Test test = new Test(file.toString());
@@ -79,11 +75,7 @@ public class XQUnitTestRunner extends ParentRunner<XQUnitTestRunner.OneTest> {
             OutputStream os = Files.newOutputStream(tempfile);
 
             try {
-                System.out.println("started test " + file);
                 ctx.test(file, os);
-                System.out.println("completed test " + file);
-                //ctx.test(file, os);
-                //test.execute(ctx.getContext(), os);
             } catch (Exception e) {
                 logger.info("ignored test exception: {}", e);
             }

@@ -2,38 +2,67 @@ package com.github.and11;
 
 import com.github.and11.basex.utils.Option;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.component.annotations.Component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProvisionOptions {
     @Parameter
-    private List<String> repositories;
+    private List<String> descriptors;
 
     @Parameter
-    private List<String> documents;
+    private String databaseName;
 
-    public List<String> getRepositories() {
-        return repositories;
+    @Parameter
+    private String defaultCollectionName;
+
+    public String getDefaultCollectionName() {
+        return defaultCollectionName;
     }
 
-    public void setRepositories(List<String> repositories) {
-        this.repositories = repositories;
+    public ProvisionOptions setDefaultCollectionName(String defaultCollectionName) {
+        this.defaultCollectionName = defaultCollectionName;
+        return this;
     }
 
-    public List<String> getDocuments() {
-        return documents;
+    @Parameter
+    private File databaseDir;
+
+    public List<String> getDescriptors() {
+        return descriptors;
     }
 
-    public void setDocuments(List<String> documents) {
-        this.documents = documents;
+    public ProvisionOptions setDescriptors(List<String> descriptors) {
+        this.descriptors = descriptors;
+        return this;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public ProvisionOptions setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+        return this;
+    }
+
+    public File getDatabaseDir() {
+        return databaseDir;
+    }
+
+    public ProvisionOptions setDatabaseDir(File databaseDir) {
+        this.databaseDir = databaseDir;
+        return this;
     }
 
     @Override
     public String toString() {
         return "ProvisionOptions{" +
-                "repositories=" + repositories +
-                ", documents=" + documents +
+                "descriptors=" + descriptors +
+                ", databaseName='" + databaseName + '\'' +
+                ", databaseDir=" + databaseDir +
                 '}';
     }
 }

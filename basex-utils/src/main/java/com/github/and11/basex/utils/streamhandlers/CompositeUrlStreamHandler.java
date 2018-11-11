@@ -1,15 +1,11 @@
-package com.github.and11.basex.utils.resolvers;
+package com.github.and11.basex.utils.streamhandlers;
 
 import com.github.and11.basex.utils.UrlStreamHandler;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CompositeUrlStreamHandler implements UrlStreamHandler {
     private ArrayList<UrlStreamHandler> handlers = new ArrayList<>();

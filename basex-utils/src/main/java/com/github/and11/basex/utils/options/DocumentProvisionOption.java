@@ -1,5 +1,14 @@
 package com.github.and11.basex.utils.options;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class DocumentProvisionOption
         extends AbstractUrlProvisionOption<DocumentProvisionOption>{
 
@@ -20,5 +29,14 @@ public class DocumentProvisionOption
 
     public DocumentProvisionOption(UrlReference url) {
         super(url);
+    }
+
+    @Override
+    public String getURL() {
+        String url = "doc:" + super.getURL();
+        if(collection != null){
+            url = url + "@" + collection;
+        }
+        return url;
     }
 }

@@ -39,8 +39,9 @@
             <artifactId>wagon-file</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.nexign.oapi.spec.devtools</groupId>
+            <groupId>com.github.and11</groupId>
             <artifactId>xml-validator</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
     </dependencies>

@@ -122,7 +122,7 @@ public class ValidatorMojo extends AbstractMojo {
 
     private Optional<String> getSchemaVersionFromDependencies() {
         return mavenProject.getDependencies().stream()
-                .filter(d -> "com.peterservice.openapi.doc.schemas".equals(d.getGroupId()))
+                .filter(d -> "com.openapi.doc.schemas".equals(d.getGroupId()))
                 .filter(d -> "xsd".equals(d.getArtifactId()) || "catalog".equals(d.getArtifactId()))
                 .map(Dependency::getVersion)
                 .findFirst();

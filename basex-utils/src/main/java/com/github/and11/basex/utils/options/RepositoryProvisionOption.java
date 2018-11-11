@@ -8,11 +8,20 @@ public class RepositoryProvisionOption
         extends AbstractUrlProvisionOption<RepositoryProvisionOption>{
 
     public enum RepositoryType {
-        XAR, JAR, XQM
-    }
+        XAR("xar"), JAR("jar"), XQM("xqm");
 
-    public RepositoryType getType() {
-        return type;
+        private String typeName;
+
+        RepositoryType(String typeName) {
+            this.typeName = typeName;
+        }
+
+        @Override
+        public String toString() {
+            return "RepositoryType{" +
+                    "typeName='" + typeName + '\'' +
+                    '}';
+        }
     }
 
     private RepositoryType type;
@@ -43,5 +52,11 @@ public class RepositoryProvisionOption
     public RepositoryProvisionOption(String url) {
         super(url);
         this.type = XQM;
+    }
+
+    @Override
+    public String getURL() {
+        String url = super.getURL();
+        return "repo:" + url + "@" + type.typeName;
     }
 }

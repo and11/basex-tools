@@ -20,7 +20,7 @@ public class XQTestIT {
     @Configuration
     public static Option[] c1() {
         return options(
-                repository(mavenBundle().groupId("com.nexign.oapi.spec.tests").artifactId("spec-miner-xqf").version("1.2.0").type("xar")).xar(),
+                //repository(mavenBundle().groupId("com.nexign.oapi.spec.tests").artifactId("spec-miner-xqf").version("1.2.0").type("xar")).xar(),
                 repository(url("classpath:test.xqm")).xqm()
         );
     }
