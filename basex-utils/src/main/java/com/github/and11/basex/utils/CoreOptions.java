@@ -28,10 +28,11 @@ public class CoreOptions {
         return new MavenArtifactUrlReference();
     }
 
-    public static RawUrlReference url(final String url) {
-
-
+    public static RawUrlReference urlref(final String url) {
         return new RawUrlReference(url);
+    }
+    public static UrlProvisionOption url(final String url) {
+        return new UrlProvisionOption(url);
     }
 
     public static Option composite(final Option... options) {

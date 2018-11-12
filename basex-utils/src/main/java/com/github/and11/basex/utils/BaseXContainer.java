@@ -2,6 +2,7 @@ package com.github.and11.basex.utils;
 
 import com.github.and11.basex.utils.options.FunctionUrlReference;
 import com.github.and11.basex.utils.options.ProvisionOption;
+import com.github.and11.basex.utils.options.UrlProvisionOption;
 import com.github.and11.basex.utils.options.UrlReference;
 import org.basex.core.BaseXException;
 import org.basex.core.Command;
@@ -51,7 +52,7 @@ public interface BaseXContainer extends AutoCloseable {
         }
     }
 
-    void provision(UrlReference... urls) throws BaseXContainerException;
+    void provision(Option... urls) throws BaseXContainerException;
     void export(FunctionUrlReference function, OutputStream os) throws UrlStreamHandler.UnresolvableUrlException, IOException;
     void test(String url, OutputStream os);
 }

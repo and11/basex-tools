@@ -15,6 +15,7 @@ import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.ArtifactProperties;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
@@ -32,6 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.Map;
 
 public class MavenUrlStreamHandler implements UrlStreamHandler {
 
@@ -43,9 +46,31 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
             new File( System.getProperty( "maven.home", envM2Home != null ? envM2Home : "" ), "conf/settings.xml" );
 
 
-    private static Artifact parseUrl(String url){
+    private static Artifact parseUrl(String pUrl) {
+        System.out.println("URL::: " + pUrl);
+        String[] p = pUrl.split("@");
+
+        String url = p[0];
+        String localPath = p.length > 1 ? p[1] : null;
+
         String[] parts = url.replaceFirst("mvn:", "").split("/");
-        return new DefaultArtifact(parts[0], parts[1], parts.length == 4 ? parts[3] : "jar", parts[2]);
+        String groupId = parts[0];
+        String artifactId = parts[1];
+        String version = parts[2];
+        String extension = parts.length == 4 ? parts[3] : "jar";
+
+
+
+        DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, extension, version);
+        if(localPath != null){
+            Map<String, String> props = Collections.singletonMap(ArtifactProperties.LOCAL_PATH, localPath);
+
+            System.out.println("" +
+                    "LOCAL PAYJU = " + localPath);
+            return artifact.setProperties(props);
+        }
+
+        return artifact;
     }
 
 
@@ -55,10 +80,19 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
         RepositorySystem repositorySystem = getRepositorySystem();
         RepositorySystemSession repositorySystemSession = getRepositorySystemSession(repositorySystem);
         Artifact artifact = parseUrl(url);
+        try {
+
+        if(artifact.getProperties() != null){
+            String localPath = artifact.getProperties().get(ArtifactProperties.LOCAL_PATH);
+            if(localPath != null){
+                System.out.println("LOCAL PAYJ FOUND");
+                return Files.newInputStream(new File(localPath).toPath());
+            }
+        }
+        System.out.println("ARTIFACT for url " + url + " is " + artifact);
+        System.out.println("FILE for " + url + " == " + artifact.getFile());
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(artifact);
-
-        try {
             ArtifactResult artifactResult = repositorySystem
                     .resolveArtifact(repositorySystemSession, artifactRequest);
             artifact = artifactResult.getArtifact();

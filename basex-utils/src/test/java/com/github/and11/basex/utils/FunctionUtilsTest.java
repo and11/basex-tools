@@ -11,7 +11,7 @@ public class FunctionUtilsTest {
 
     @Test
     public void testFunctionUrlPatternWithArguments(){
-        Matcher matcher = FunctionUtils.urlPattern.matcher("xqf:xml:some-namespace#some-name/a1;a2");
+        Matcher matcher = FunctionUtils.urlPattern.matcher("xqf:xml:some-namespace#some-name@a1;a2");
         assertTrue(matcher.matches());
         assertEquals(4, matcher.groupCount());
         assertEquals("xml", matcher.group(1));

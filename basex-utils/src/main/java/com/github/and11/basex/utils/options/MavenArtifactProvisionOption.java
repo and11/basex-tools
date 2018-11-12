@@ -25,7 +25,7 @@ public class MavenArtifactProvisionOption
     /**
      * Maven artifact.
      */
-    private final MavenUrlReference m_artifact;
+    private final MavenUrlReference artifact;
     /**
      * True if the user used update method.
      */
@@ -36,7 +36,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption()
     {
-        m_artifact = new MavenArtifactUrlReference();
+        artifact = new MavenArtifactUrlReference();
     }
 
     /**
@@ -48,7 +48,7 @@ public class MavenArtifactProvisionOption
     {
 
 //        validateNotNull( artifact, "Maven artifact" );
-        m_artifact = artifact;
+        this.artifact = artifact;
     }
 
     /**
@@ -56,7 +56,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption groupId( final String groupId )
     {
-        m_artifact.groupId( groupId );
+        artifact.groupId( groupId );
         m_updateUsed = false;
         return this;
     }
@@ -66,7 +66,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption artifactId( final String artifactId )
     {
-        m_artifact.artifactId( artifactId );
+        artifact.artifactId( artifactId );
         return this;
     }
 
@@ -75,7 +75,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption type( final String type )
     {
-        m_artifact.type( type );
+        artifact.type( type );
         return this;
     }
 
@@ -84,7 +84,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption classifier( String classifier )
     {
-        m_artifact.classifier( classifier );
+        artifact.classifier( classifier );
         return this;
     }
 
@@ -93,8 +93,13 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption version( final String version )
     {
-        m_artifact.version( version );
+        artifact.version( version );
         return this;
+    }
+
+    @Override
+    public MavenUrlReference systemPath(String path) {
+        return artifact.systemPath(path);
     }
 
     /**
@@ -102,7 +107,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption version( final MavenArtifactUrlReference.VersionResolver resolver )
     {
-        m_artifact.version( resolver );
+        artifact.version( resolver );
         return this;
     }
 
@@ -111,7 +116,7 @@ public class MavenArtifactProvisionOption
      */
     public MavenArtifactProvisionOption versionAsInProject()
     {
-        m_artifact.versionAsInProject();
+        artifact.versionAsInProject();
         return this;
     }
 
@@ -120,7 +125,7 @@ public class MavenArtifactProvisionOption
      */
     public Boolean isSnapshot()
     {
-        return m_artifact.isSnapshot();
+        return artifact.isSnapshot();
     }
 
     /**
@@ -128,7 +133,7 @@ public class MavenArtifactProvisionOption
      */
     public String getURL()
     {
-        return m_artifact.getURL();
+        return artifact.getURL();
     }
 
     /**
@@ -138,7 +143,7 @@ public class MavenArtifactProvisionOption
     @Override
     public String toString()
     {
-        return m_artifact.toString();
+        return artifact.toString();
     }
 
 }

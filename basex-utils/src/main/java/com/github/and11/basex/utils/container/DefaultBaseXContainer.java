@@ -9,6 +9,7 @@ import com.github.and11.basex.utils.options.FunctionUrlReference;
 import com.github.and11.basex.utils.options.InitializationOption;
 import com.github.and11.basex.utils.options.OpenDatabaseOption;
 import com.github.and11.basex.utils.options.ProvisionOption;
+import com.github.and11.basex.utils.options.UrlProvisionOption;
 import com.github.and11.basex.utils.options.UrlReference;
 import com.github.and11.basex.utils.options.WorkingDirectoryOption;
 import com.github.and11.basex.utils.streamhandlers.CompositeUrlStreamHandler;
@@ -38,6 +39,8 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.github.and11.basex.utils.CoreOptions.workingDirectory;
 import static com.github.and11.basex.utils.OptionUtils.filter;
@@ -110,7 +113,13 @@ public class DefaultBaseXContainer implements BaseXContainer {
     }
 
     private List<String> parseControlBlocks(String url) {
-        return Arrays.asList(url.split("@"));
+        Pattern withType = Pattern.compile("^(.+)@(.+)");
+        Matcher matcher = withType.matcher(url);
+        if(matcher.matches()){
+            return Arrays.asList(matcher.group(1), matcher.group(2));
+        }
+
+        return Arrays.asList(url);
     }
 
     Function<String, Boolean> handleDocumentProvisionUrl(Function<String, Boolean> handler) {
@@ -131,6 +140,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
     Function<String, Boolean> handleRepositoryProvisionUrl(Function<String, Boolean> handler) {
         return (url) -> {
 
+            System.out.println("LOADING REPO " + url);
             if (!url.startsWith("repo:")) {
                 return handler.apply(url);
             }
@@ -183,12 +193,16 @@ public class DefaultBaseXContainer implements BaseXContainer {
         }
     }
 
+    public void provision(UrlReference[] urls) throws BaseXContainerException {
+
+    }
+
     @Override
-    public void provision(UrlReference... urls) throws BaseXContainerException {
+    public void provision(Option... urls) throws BaseXContainerException {
         Function<String, Boolean> handler = handleDocumentProvisionUrl(
                 handleRepositoryProvisionUrl((__) -> false ));
 
-        for (UrlReference url : urls) {
+        for (UrlProvisionOption url : filter(UrlProvisionOption.class,  urls)) {
             Boolean result = handler.apply(url.getURL());
             if(!result){
                 throw new BaseXContainerException("can't handle url");

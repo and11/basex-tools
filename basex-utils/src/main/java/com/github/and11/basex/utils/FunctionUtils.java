@@ -70,7 +70,7 @@ public class FunctionUtils {
                 .append(name);
 
         if (arguments != null && arguments.length > 0) {
-            sb.append("/").append(writeFunctionArguments(arguments));
+            sb.append("@").append(writeFunctionArguments(arguments));
         }
 
         return sb.toString();
@@ -109,7 +109,7 @@ public class FunctionUtils {
         }
     }
 
-    public static Pattern urlPattern = Pattern.compile("^xqf:([^:]+):([^#]+)#([^/]+)(?:/(.*))?$");
+    public static Pattern urlPattern = Pattern.compile("^xqf:([^:]+):([^#]+)#([^@]+)(?:@(.*))?$");
 
     public static Function parseUrl(String url) throws UrlStreamHandler.UnresolvableUrlException, IOException {
 
@@ -122,7 +122,7 @@ public class FunctionUtils {
 
         function.mode = matcher.group(1);
         function.namespace = matcher.group(2);
-        function.name = matcher.group(3).replace("/$","");
+        function.name = matcher.group(3).replace("@$","");
         System.out.println("groupCount: " + matcher.groupCount());
         System.out.println("url: " + url);
         if(matcher.group(4) != null){

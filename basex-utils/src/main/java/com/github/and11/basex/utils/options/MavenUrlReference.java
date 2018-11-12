@@ -11,6 +11,8 @@ public interface MavenUrlReference extends UrlReference {
 
     MavenUrlReference version(String version);
 
+    MavenUrlReference systemPath(String path);
+
     MavenUrlReference versionAsInProject();
 
     MavenUrlReference version(VersionResolver resolver);

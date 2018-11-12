@@ -9,6 +9,7 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
     private String type;
     private String classifier;
     private String version;
+    private String systemPath;
 
     @Override
     public MavenUrlReference groupId(String groupId) {
@@ -42,6 +43,12 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
     public MavenUrlReference version(String version) {
 
         this.version = version;
+        return this;
+    }
+
+    @Override
+    public MavenUrlReference systemPath(String path) {
+        this.systemPath = path;
         return this;
     }
 
@@ -86,6 +93,10 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
         {
             url.append( "/" ).append( classifier );
         }
+
+        if(systemPath != null){
+            url.append("@").append(systemPath);
+        }
         return url.toString();
         
     }
@@ -98,6 +109,7 @@ public class MavenArtifactUrlReference implements MavenUrlReference {
                 ", type='" + type + '\'' +
                 ", classifier='" + classifier + '\'' +
                 ", version='" + version + '\'' +
+                ", systemPath='" + systemPath + '\'' +
                 '}';
     }
 }

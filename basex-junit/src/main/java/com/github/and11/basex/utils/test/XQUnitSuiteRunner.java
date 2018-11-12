@@ -80,7 +80,8 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
 
         BaseXContainer container;
         try {
-            container = new DefaultBaseXContainersFactory(testClass.getClassLoader()).createContainer(options.toArray(new Option[options.size()]));
+            container = new DefaultBaseXContainersFactory(testClass.getClassLoader()).createContainer();
+            container.provision(options.toArray(new Option[options.size()]));
 
         } catch (BaseXContainer.BaseXContainerException e) {
             throw new RuntimeException(e);

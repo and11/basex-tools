@@ -1,15 +1,13 @@
 package com.github.and11.mojos;
 
-import com.github.and11.DependencySet;
-import com.github.and11.FileSet;
 import com.github.and11.Function;
 import com.github.and11.ProvisionOptions;
 import com.github.and11.basex.utils.BaseXContainer;
 import com.github.and11.basex.utils.CoreOptions;
-import com.github.and11.basex.utils.Option;
 import com.github.and11.basex.utils.UrlStreamHandler;
 import com.github.and11.basex.utils.container.DefaultBaseXContainersFactory;
 import com.github.and11.basex.utils.options.FunctionUrlReference;
+import com.github.and11.basex.utils.options.UrlProvisionOption;
 import com.github.and11.basex.utils.options.UrlReference;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,7 +31,6 @@ import static com.github.and11.basex.utils.CoreOptions.createDatabase;
 import static com.github.and11.basex.utils.CoreOptions.document;
 import static com.github.and11.basex.utils.CoreOptions.function;
 import static com.github.and11.basex.utils.CoreOptions.openDatabase;
-import static com.github.and11.basex.utils.CoreOptions.options;
 import static com.github.and11.basex.utils.CoreOptions.url;
 import static com.github.and11.basex.utils.CoreOptions.workingDirectory;
 
@@ -42,12 +39,6 @@ public class ExecMojo extends AbstractProvisioningMojo {
 
     @Parameter
     private ProvisionOptions provision;
-
-    @Parameter(readonly = true, required = false)
-    List<DependencySet> dependencySets;
-
-    @Parameter(readonly = true, required = false)
-    List<FileSet> fileSets;
 
     @Parameter(readonly = true, required = true)
     List<Function> functions;
@@ -68,23 +59,27 @@ public class ExecMojo extends AbstractProvisioningMojo {
     private MavenProject mavenProject;
 
 
-    private Path getDatabaseDir(ProvisionOptions opts){
+    private Path getDatabaseDir(ProvisionOptions opts) {
         return opts.getDatabaseDir() == null ? defaultDatabaseDir.toPath() : opts.getDatabaseDir().toPath();
     }
 
-    private String getDatabaseName(ProvisionOptions opts){
+    private String getDatabaseName(ProvisionOptions opts) {
         return opts.getDatabaseName() == null ? defaultDatabaseName : opts.getDatabaseName();
     }
 
-    private String getCollectionName(ProvisionOptions opts){
+    private String getCollectionName(ProvisionOptions opts) {
         return opts.getDefaultCollectionName() == null ? defaultCollectionName : opts.getDefaultCollectionName();
     }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         ArrayList<UrlReference> opts = new ArrayList<>();
+
+        MavenUrlResolver resolver = new MavenUrlResolver(mavenProject.getDependencies());
+
+
         opts.addAll(
-                provision.getDescriptors().stream().map(CoreOptions::url).collect(Collectors.toList())
+            resolver.resolve(provision.getDescriptors()).stream().map(CoreOptions::url).collect(Collectors.toList())
         );
 
         try {
@@ -96,7 +91,7 @@ public class ExecMojo extends AbstractProvisioningMojo {
                             openDatabase(provision.getDatabaseName()).collection(getCollectionName(provision))
                     );
 
-            container.provision(opts.toArray(new UrlReference[]{}));
+            container.provision(opts.toArray(new UrlProvisionOption[]{}));
 
             for (Function function : functions) {
 
@@ -111,7 +106,6 @@ public class ExecMojo extends AbstractProvisioningMojo {
                     container.export(f, output);
 
                     if (function.getRecipientCollectionName().isPresent()) {
-                        System.out.println("loading back into " + function.getRecipientCollectionName().get());
                         container.provision(document(url(outputFile.toUri().toString())).collection(function.getRecipientCollectionName().get()));
                     }
                 }
@@ -127,4 +121,5 @@ public class ExecMojo extends AbstractProvisioningMojo {
         }
 
     }
+
 }
