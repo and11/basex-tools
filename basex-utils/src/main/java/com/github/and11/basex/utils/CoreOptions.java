@@ -1,6 +1,7 @@
 package com.github.and11.basex.utils;
 
 import com.github.and11.basex.utils.options.CreateDatabaseOption;
+import com.github.and11.basex.utils.options.DatabaseOption;
 import com.github.and11.basex.utils.options.DefaultCompositeOption;
 import com.github.and11.basex.utils.options.DefaultFunctionUrlReference;
 import com.github.and11.basex.utils.options.DocumentProvisionOption;
@@ -51,6 +52,9 @@ public class CoreOptions {
         return new RepositoryProvisionOption(url).type(type);
     }
 
+    public static DatabaseOption database(UrlReference url){
+        return new DatabaseOption(url);
+    }
     public static RepositoryProvisionOption repository(UrlReference url, String type) {
         return repository(url, RepositoryProvisionOption.RepositoryType.valueOf(type));
     }

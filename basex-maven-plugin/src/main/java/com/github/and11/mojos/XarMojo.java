@@ -49,6 +49,7 @@ public class XarMojo extends AbstractMojo {
 
     @Component
     private MavenProject mavenProject;
+
     @Component
     private ArchiverManager archiverManager;
 

@@ -1,38 +1,15 @@
 package com.github.and11.basex.utils.options;
 
-import com.github.and11.basex.utils.Option;
+public class DatabaseOption
+        implements InitializationOption<DatabaseOption> {
 
-import java.util.Optional;
+    private final UrlReference database;
 
-public class DatabaseOption implements Option {
-
-    private OpenMode mode;
-
-    public enum OpenMode {
-        CREATE, OPEN
+    public DatabaseOption(UrlReference url) {
+        this.database = url;
     }
 
-    public DatabaseOption(String databaseName) {
-        this.databaseName = databaseName;
-    }
-
-    private String databaseName;
-
-    public DatabaseOption create(){
-        this.mode = OpenMode.CREATE;
-        return this;
-    }
-
-    public DatabaseOption open(){
-        this.mode = OpenMode.OPEN;
-        return this;
-    }
-
-    public Optional<OpenMode> getMode() {
-        return Optional.ofNullable(mode);
-    }
-
-    public String getDatabaseName() {
-        return databaseName;
+    public UrlReference getDatabase() {
+        return database;
     }
 }

@@ -3,8 +3,9 @@ package com.github.and11.basex.utils.container;
 import com.github.and11.basex.utils.BaseXContainer;
 import com.github.and11.basex.utils.Option;
 import com.github.and11.basex.utils.UrlStreamHandler;
+import com.github.and11.basex.utils.ZipUtils;
 import com.github.and11.basex.utils.options.CreateDatabaseOption;
-import com.github.and11.basex.utils.options.DocumentProvisionOption;
+import com.github.and11.basex.utils.options.DatabaseOption;
 import com.github.and11.basex.utils.options.FunctionUrlReference;
 import com.github.and11.basex.utils.options.InitializationOption;
 import com.github.and11.basex.utils.options.OpenDatabaseOption;
@@ -29,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -37,7 +39,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,8 +54,9 @@ public class DefaultBaseXContainer implements BaseXContainer {
     private UrlStreamHandler resolvers;
     private ClassLoader classLoader;
     private String defaultCollection = UUID.randomUUID().toString();
+    private File workingDirectory;
 
-    public DefaultBaseXContainer(UrlStreamHandler urlStreamHandler, InitializationOption<?>... options) {
+    DefaultBaseXContainer(UrlStreamHandler urlStreamHandler, InitializationOption<?>... options) {
         this.options = options;
         this.urlStreamHandler = new CompositeUrlStreamHandler(urlStreamHandler);
     }
@@ -67,6 +69,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
         WorkingDirectoryOption workingDirectoryOption = extractOption(filter(WorkingDirectoryOption.class, options)).
                 orElse(workingDirectory(createTemporaryDirectory()));
         context.getAndSet(new CloseableContext(createContext(workingDirectoryOption.getWorkingDirectory())));
+        this.workingDirectory = workingDirectoryOption.getWorkingDirectory().toFile();
         urlStreamHandler.addHandler(new XQFunctionUrlStreamHandler(context.get()));
     }
 
@@ -80,8 +83,30 @@ public class DefaultBaseXContainer implements BaseXContainer {
         }
     }
 
-    private void initialize(OpenDatabaseOption... options) throws BaseXContainerException {
+    private void initialize(DatabaseOption... options) throws BaseXContainerException {
         if (options == null) {
+            return;
+        }
+
+        if (options.length > 1) {
+            throw new IllegalArgumentException("can't have more than one DatabaseOption");
+        }
+
+        DatabaseOption option = options[0];
+
+
+        try (InputStream is = urlStreamHandler.openStream(option.getDatabase().getURL());
+        ) {
+            ZipUtils.unzip(is, workingDirectory);
+        } catch (UrlStreamHandler.UnresolvableUrlException e) {
+            throw new BaseXContainerException(e);
+        } catch (IOException e) {
+            throw new BaseXContainerException(e);
+        }
+    }
+
+    private void initialize(OpenDatabaseOption... options) throws BaseXContainerException {
+        if (options == null || options.length == 0) {
             return;
         }
 
@@ -115,7 +140,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
     private List<String> parseControlBlocks(String url) {
         Pattern withType = Pattern.compile("^(.+)@(.+)");
         Matcher matcher = withType.matcher(url);
-        if(matcher.matches()){
+        if (matcher.matches()) {
             return Arrays.asList(matcher.group(1), matcher.group(2));
         }
 
@@ -193,18 +218,22 @@ public class DefaultBaseXContainer implements BaseXContainer {
         }
     }
 
-    public void provision(UrlReference[] urls) throws BaseXContainerException {
-
+    @Override
+    public File getWorkingDirectory() {
+        return workingDirectory;
     }
 
     @Override
-    public void provision(Option... urls) throws BaseXContainerException {
+    public void provision(ProvisionOption... urls) throws BaseXContainerException {
         Function<String, Boolean> handler = handleDocumentProvisionUrl(
-                handleRepositoryProvisionUrl((__) -> false ));
+                handleRepositoryProvisionUrl((__) -> false));
 
-        for (UrlProvisionOption url : filter(UrlProvisionOption.class,  urls)) {
+
+        System.out.println("PROVISION: " + Arrays.asList(urls));
+        for (UrlProvisionOption url : filter(UrlProvisionOption.class, urls)) {
+            System.out.println("READY FR " + url);
             Boolean result = handler.apply(url.getURL());
-            if(!result){
+            if (!result) {
                 throw new BaseXContainerException("can't handle url");
             }
         }

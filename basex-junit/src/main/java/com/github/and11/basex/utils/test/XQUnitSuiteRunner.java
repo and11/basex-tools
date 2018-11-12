@@ -12,6 +12,7 @@ import org.junit.runners.model.InitializationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -21,6 +22,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+
+import static com.github.and11.basex.utils.CoreOptions.createDatabase;
+import static com.github.and11.basex.utils.CoreOptions.openDatabase;
+import static com.github.and11.basex.utils.CoreOptions.workingDirectory;
 
 
 public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements AutoCloseable {
@@ -80,9 +85,13 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
 
         BaseXContainer container;
         try {
-            container = new DefaultBaseXContainersFactory(testClass.getClassLoader()).createContainer();
-            container.provision(options.toArray(new Option[options.size()]));
+            container = new DefaultBaseXContainersFactory(testClass.getClassLoader()).createContainer(
+                    workingDirectory(new File("testdb").toPath()),
+                    createDatabase("test"),
+                    openDatabase("test")
+            );
 
+            container.provision(options.toArray(new Option[options.size()]));
         } catch (BaseXContainer.BaseXContainerException e) {
             throw new RuntimeException(e);
         }
@@ -126,6 +135,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
 
     @Override
     public void close() throws Exception {
+        System.out.println("CLOSING !!!!!!!");
         if(container != null){
             container.close();
         }

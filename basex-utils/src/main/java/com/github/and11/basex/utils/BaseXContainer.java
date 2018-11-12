@@ -10,6 +10,7 @@ import org.basex.core.Context;
 import org.basex.core.cmd.Test;
 import org.basex.query.QueryProcessor;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -52,7 +53,9 @@ public interface BaseXContainer extends AutoCloseable {
         }
     }
 
-    void provision(Option... urls) throws BaseXContainerException;
+    File getWorkingDirectory();
+
+    void provision(ProvisionOption... urls) throws BaseXContainerException;
     void export(FunctionUrlReference function, OutputStream os) throws UrlStreamHandler.UnresolvableUrlException, IOException;
     void test(String url, OutputStream os);
 }

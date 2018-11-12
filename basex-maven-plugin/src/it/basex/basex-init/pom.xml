@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <artifactId>basex</artifactId>
+        <groupId>test</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>basex-init</artifactId>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <dependencies>
+        <dependency>
+            <groupId>test</groupId>
+            <artifactId>basex-db</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <type>basex</type>
+            <scope>system</scope>
+            <systemPath>@pom.build.directory@/it/basex/basex-db/target/basex-db-1.0-SNAPSHOT.basex</systemPath>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>@pom.groupId@</groupId>
+                <artifactId>@pom.artifactId@</artifactId>
+                <version>@pom.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <provision>
+                                <defaultCollection>test</defaultCollection>
+                                <openDatabase>mydb</openDatabase>
+                                <descriptors>
+                                    <descriptor>doc:file:///${project.build.directory}/classes/data.xml@other</descriptor>
+                                    <descriptor>doc:file:///${project.build.directory}/classes/data.xml</descriptor>
+                                    <descriptor>doc:xqf:xml:http://some/namespace#test@other</descriptor>
+                                </descriptors>
+                            </provision>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

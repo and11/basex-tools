@@ -1,4 +1,4 @@
-package com.github.and11.mojos;
+package com.github.and11;
 
 import com.github.and11.basex.utils.Option;
 import com.github.and11.basex.utils.options.DocumentProvisionOption;
@@ -28,7 +28,7 @@ public class MavenUrlResolver {
         this.dependencies = dependencies;
     }
 
-    List<String> resolve(List<String> urls) {
+    public List<String> resolve(List<String> urls) {
         ArrayList<String> processed = new ArrayList<>();
         for (String url : urls) {
             if (url.startsWith("scan-deps:")) {
