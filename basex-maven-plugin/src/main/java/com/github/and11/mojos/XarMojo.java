@@ -28,9 +28,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Mojo(name = "xar", requiresProject = true, threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE)
-public class XarMojo extends AbstractMojo {
-    @Parameter(required = false, defaultValue = "${project.build.directory}/${project.artifactId}-${project.version}")
-    private File workingDir;
+public class XarMojo extends AbstractBaseXMojo {
 
     @Parameter(required = false, defaultValue = "${project.build.directory}/${project.artifactId}-${project.version}.xar")
     private File artifactFile;
@@ -53,12 +51,8 @@ public class XarMojo extends AbstractMojo {
     @Component
     private ArchiverManager archiverManager;
 
-    private File getWorkingDir() {
-        return workingDir;
-    }
-
     private File getAbbrevDir() {
-        return getWorkingDir().toPath().resolve(packageAbbrev).toFile();
+        return getDatabaseDir().toPath().resolve(packageAbbrev).toFile();
     }
 
 
@@ -96,14 +90,14 @@ public class XarMojo extends AbstractMojo {
 
         if(projectHasJavaClasses()) {
             try {
-                createJavaBasexDescriptor(resources, getWorkingDir().toPath().resolve("basex.xml").toFile());
+                createJavaBasexDescriptor(resources, getDatabaseDir().toPath().resolve("basex.xml").toFile());
             } catch (IOException e) {
                 throw new MojoExecutionException("can't store basex descriptor", e);
             }
         }
 
         try {
-            createExPathPkgDescriptor(resources, getWorkingDir().toPath().resolve("expath-pkg.xml").toFile());
+            createExPathPkgDescriptor(resources, getDatabaseDir().toPath().resolve("expath-pkg.xml").toFile());
         } catch (IOException e) {
             throw new MojoExecutionException("can;t store package", e);
         }
@@ -138,7 +132,7 @@ public class XarMojo extends AbstractMojo {
         }
     }
     private void createXarArchive(File target) throws MojoExecutionException {
-        createZipArchive(getWorkingDir(), target);
+        createZipArchive(getDatabaseDir(), target);
     }
     protected void createZipArchive(File sourceDir, File target) throws MojoExecutionException {
 

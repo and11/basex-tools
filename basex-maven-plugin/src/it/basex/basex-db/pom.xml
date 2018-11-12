@@ -32,18 +32,25 @@
                 <artifactId>@pom.artifactId@</artifactId>
                 <version>@pom.version@</version>
                 <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>create</goal>
+                            <goal>provision</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <provision>
-                        <defaultCollection>test</defaultCollection>
-                        <createDatabase>mydb</createDatabase>
-                        <descriptors>
-                            <descriptor>repo:file:///${project.build.directory}/classes/my-functions.xqm@xqm</descriptor>
-                            <descriptor>doc:file:///${project.build.directory}/classes/data.xml@other</descriptor>
-                            <descriptor>doc:file:///${project.build.directory}/classes/data.xml</descriptor>
-                            <descriptor>doc:xqf:xml:http://some/namespace#test@other</descriptor>
-                            <descriptor>scan-deps:.+/xar</descriptor>
-                        </descriptors>
-                    </provision>
+                    <databaseName>mydb</databaseName>
+                    <defautlCollection>myCollection</defautlCollection>
+                    <descriptors>
+                        <descriptor>repo:file:///${project.build.directory}/classes/my-functions.xqm@xqm</descriptor>
+                        <descriptor>doc:file:///${project.build.directory}/classes/data.xml@other</descriptor>
+                        <descriptor>doc:file:///${project.build.directory}/classes/data.xml</descriptor>
+                        <descriptor>doc:xqf:xml:http://some/namespace#test@other</descriptor>
+                        <descriptor>scan-deps:.+/xar</descriptor>
+                    </descriptors>
                 </configuration>
             </plugin>
         </plugins>

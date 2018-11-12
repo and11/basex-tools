@@ -33,18 +33,18 @@
                 <executions>
                     <execution>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>open</goal>
+                            <goal>provision</goal>
                         </goals>
                         <configuration>
-                            <provision>
-                                <defaultCollection>test</defaultCollection>
-                                <openDatabase>mydb</openDatabase>
-                                <descriptors>
-                                    <descriptor>doc:file:///${project.build.directory}/classes/data.xml@other</descriptor>
-                                    <descriptor>doc:file:///${project.build.directory}/classes/data.xml</descriptor>
-                                    <descriptor>doc:xqf:xml:http://some/namespace#test@other</descriptor>
-                                </descriptors>
-                            </provision>
+                            <database>file:///@pom.build.directory@/it/basex/basex-db/target/basex-db-1.0-SNAPSHOT.basex</database>
+                            <databaseName>mydb</databaseName>
+                            <defautlCollection>myCollection</defautlCollection>
+                            <descriptors>
+                                <descriptor>doc:file:///${project.build.directory}/classes/data.xml@other</descriptor>
+                                <descriptor>doc:file:///${project.build.directory}/classes/data.xml</descriptor>
+                                <descriptor>doc:xqf:xml:http://some/namespace#test@other</descriptor>
+                            </descriptors>
                         </configuration>
                     </execution>
                 </executions>

@@ -12,4 +12,11 @@ public class DatabaseOption
     public UrlReference getDatabase() {
         return database;
     }
+
+    @Override
+    public String toString() {
+        return "DatabaseOption{" +
+                "database=" + database +
+                '}';
+    }
 }

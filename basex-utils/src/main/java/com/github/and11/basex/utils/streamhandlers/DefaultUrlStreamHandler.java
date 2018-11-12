@@ -26,13 +26,16 @@ public class DefaultUrlStreamHandler implements UrlStreamHandler {
 
     @Override
     public InputStream openStream(String pUrl) throws UnresolvableUrlException {
+        System.out.println("DEFAULT URL HANDLE RFOR " + pUrl);
 
         try {
             URL url = new URL(pUrl);
             return url.openStream();
         } catch (MalformedURLException e) {
+            System.out.println("AAAAAAAA ");
             throw new UnresolvableUrlException(pUrl, e);
         } catch (IOException e) {
+            System.out.println("BBBBBBBB ");
             throw new UnresolvableUrlException(pUrl, e);
         }
 

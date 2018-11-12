@@ -77,6 +77,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
         try {
             initializeContext();
             initialize(filter(CreateDatabaseOption.class, options));
+            initialize(filter(DatabaseOption.class, options));
             initialize(filter(OpenDatabaseOption.class, options));
         } catch (IOException e) {
             throw new BaseXContainerException(e);
@@ -84,7 +85,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
     }
 
     private void initialize(DatabaseOption... options) throws BaseXContainerException {
-        if (options == null) {
+        if (options == null || options.length == 0) {
             return;
         }
 
@@ -94,9 +95,15 @@ public class DefaultBaseXContainer implements BaseXContainer {
 
         DatabaseOption option = options[0];
 
+        System.out.println("initialize DatabaseOption " + option.getDatabase().getURL());
+        System.out.println("WORKING DIR = " + workingDirectory);
 
-        try (InputStream is = urlStreamHandler.openStream(option.getDatabase().getURL());
+        try (InputStream is = getUrlStreamHandler(option.getDatabase().getURL()).openStream(option.getDatabase().getURL());
         ) {
+            if(Files.exists(workingDirectory.toPath())){
+               throw new BaseXContainerException("directory " + workingDirectory + " already exists");
+            }
+            Files.createDirectories(workingDirectory.toPath());
             ZipUtils.unzip(is, workingDirectory);
         } catch (UrlStreamHandler.UnresolvableUrlException e) {
             throw new BaseXContainerException(e);
@@ -164,8 +171,6 @@ public class DefaultBaseXContainer implements BaseXContainer {
 
     Function<String, Boolean> handleRepositoryProvisionUrl(Function<String, Boolean> handler) {
         return (url) -> {
-
-            System.out.println("LOADING REPO " + url);
             if (!url.startsWith("repo:")) {
                 return handler.apply(url);
             }
@@ -185,8 +190,6 @@ public class DefaultBaseXContainer implements BaseXContainer {
     }
 
     private void loadDocument(String url, final String collection) {
-
-        System.out.println("loading doc into collection " + collection);
         Add add = new Add(collection);
         try (InputStream is = getUrlStreamHandler(url).openStream(url)) {
             add.setInput(is);
@@ -227,11 +230,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
     public void provision(ProvisionOption... urls) throws BaseXContainerException {
         Function<String, Boolean> handler = handleDocumentProvisionUrl(
                 handleRepositoryProvisionUrl((__) -> false));
-
-
-        System.out.println("PROVISION: " + Arrays.asList(urls));
         for (UrlProvisionOption url : filter(UrlProvisionOption.class, urls)) {
-            System.out.println("READY FR " + url);
             Boolean result = handler.apply(url.getURL());
             if (!result) {
                 throw new BaseXContainerException("can't handle url");

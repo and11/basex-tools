@@ -3,6 +3,7 @@ package com.github.and11.basex.utils.test;
 import com.github.and11.basex.utils.BaseXContainer;
 import com.github.and11.basex.utils.Option;
 import com.github.and11.basex.utils.container.DefaultBaseXContainersFactory;
+import com.github.and11.basex.utils.options.ProvisionOption;
 import com.github.and11.basex.utils.test.annotations.Configuration;
 import com.github.and11.basex.utils.test.annotations.Suites;
 import org.junit.runner.Description;
@@ -44,10 +45,10 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
     }
 
 
-    private List<Option> getConfigurationOptions(Class<?> testClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    private List<ProvisionOption> getConfigurationOptions(Class<?> testClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         final Object testInstance = testClass.newInstance();
         Method[] methods = testClass.getDeclaredMethods();
-        List<Option> options = new ArrayList<>();
+        List<ProvisionOption> options = new ArrayList<>();
         for (Method configMethod : methods) {
             Configuration annotation = configMethod.getAnnotation(Configuration.class);
             if (
@@ -58,7 +59,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
                             && configMethod.getParameterTypes().length == 0
                             && configMethod.getReturnType().isArray()
                             && Option.class.isAssignableFrom(configMethod.getReturnType().getComponentType())) {
-                options.addAll(Arrays.asList((Option[]) configMethod.invoke(testInstance, null)));
+                options.addAll(Arrays.asList((ProvisionOption[]) configMethod.invoke(testInstance, null)));
             }
         }
 
@@ -74,7 +75,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
     public XQUnitSuiteRunner(Class<?> testClass) throws InitializationError {
         super(null);
 
-        List<Option> options = new ArrayList<>();
+        List<ProvisionOption> options = new ArrayList<>();
         try {
             options.addAll(getConfigurationOptions(testClass));
         } catch (Exception e) {
@@ -91,7 +92,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
                     openDatabase("test")
             );
 
-            container.provision(options.toArray(new Option[options.size()]));
+            container.provision(options.toArray(new ProvisionOption[options.size()]));
         } catch (BaseXContainer.BaseXContainerException e) {
             throw new RuntimeException(e);
         }

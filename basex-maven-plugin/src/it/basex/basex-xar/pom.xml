@@ -21,18 +21,6 @@
                 <artifactId>@pom.artifactId@</artifactId>
                 <version>@pom.version@</version>
                 <extensions>true</extensions>
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>xar</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<classes>-->
-                                <!--<class>my.test.MyTestClass</class>-->
-                            <!--</classes>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
                 <configuration>
                     <classes>
                         <class>my.test.MyTestClass</class>

@@ -147,5 +147,4 @@ public class ValidatorBuilder {
 
         return resolver;
     }
-
 }
