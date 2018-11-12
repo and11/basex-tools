@@ -19,7 +19,6 @@
         <dependency>
             <groupId>com.github.and11</groupId>
             <artifactId>basex-utils</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
