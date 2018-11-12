@@ -13,8 +13,6 @@
         <module>basex-maven-plugin</module>
         <module>basex-utils</module>
         <module>basex-tools-demo</module>
-        <module>xml-validator-plugin</module>
-        <module>xml-validator</module>
     </modules>
 
     <properties>
