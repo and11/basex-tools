@@ -5,6 +5,7 @@ declare function _:test(){
     <some>data</some>
 };
 
+(: exec-test :)
 declare function _:getFromDatas($path){
     collection($path)/*
 };

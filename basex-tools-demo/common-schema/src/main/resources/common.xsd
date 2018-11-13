@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           attributeFormDefault="qualified"
+           targetNamespace="http://my-schemas/common/v1"
+           xmlns="http://my-schemas/common/v1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
+
+    <xs:attributeGroup name="resource">
+        <xs:attribute name="resource" type="xs:string"/>
+    </xs:attributeGroup>
+    <xs:attribute name="resourceRef" type="xs:string"/>
+
+
+</xs:schema>

@@ -28,6 +28,9 @@ public class DatabaseMojo extends AbstractBaseXMojo {
     @Component
     private MavenProject mavenProject;
 
+    @Component
+    private MavenProjectHelper projectHelper;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -39,6 +42,7 @@ public class DatabaseMojo extends AbstractBaseXMojo {
 
             if("basex".equals(mavenProject.getPackaging())){
                 mavenProject.setFile(artifactFile);
+                //projectHelper.attachArtifact(mavenProject, artifactFile, null);
             }
 
         } catch (final Exception e) {

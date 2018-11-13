@@ -55,7 +55,7 @@ public interface BaseXContainer extends AutoCloseable {
 
     File getWorkingDirectory();
 
-    void provision(ProvisionOption... urls) throws BaseXContainerException;
+    void provision(Option... urls) throws BaseXContainerException;
     void export(FunctionUrlReference function, OutputStream os) throws UrlStreamHandler.UnresolvableUrlException, IOException;
     void test(String url, OutputStream os);
 }

@@ -16,6 +16,7 @@ import com.github.and11.basex.utils.options.WorkingDirectoryOption;
 import com.github.and11.basex.utils.streamhandlers.CompositeUrlStreamHandler;
 import com.github.and11.basex.utils.streamhandlers.DefaultUrlStreamHandler;
 import com.github.and11.basex.utils.streamhandlers.XQFunctionUrlStreamHandler;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.basex.core.BaseXException;
 import org.basex.core.Context;
@@ -34,6 +35,7 @@ import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -55,14 +57,27 @@ public class DefaultBaseXContainer implements BaseXContainer {
     private ClassLoader classLoader;
     private String defaultCollection = UUID.randomUUID().toString();
     private File workingDirectory;
+    private ArrayList<Path> tempdirs = new ArrayList<>();
 
     DefaultBaseXContainer(UrlStreamHandler urlStreamHandler, InitializationOption<?>... options) {
         this.options = options;
         this.urlStreamHandler = new CompositeUrlStreamHandler(urlStreamHandler);
     }
 
-    private static Path createTemporaryDirectory() throws IOException {
-        return Files.createTempDirectory("basex");
+    private void dropTempDirs(){
+        for (Path tempdir : tempdirs) {
+            try {
+                FileUtils.deleteDirectory(tempdir.toFile());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Path createTemporaryDirectory() throws IOException {
+        Path tempdir = Files.createTempDirectory("basex.");
+        tempdirs.add(tempdir);
+        return tempdir;
     }
 
     private void initializeContext() throws IOException {
@@ -177,7 +192,6 @@ public class DefaultBaseXContainer implements BaseXContainer {
 
             String u = url.replaceFirst("repo:", "");
             List<String> blocks = parseControlBlocks(u);
-
             installRepository(blocks.get(0), blocks.size() > 1 ? blocks.get(1) : "xqm");
 
             return true;
@@ -209,8 +223,9 @@ public class DefaultBaseXContainer implements BaseXContainer {
     }
 
     private void installRepository(String url, String type) {
+        Path temp = null;
         try (InputStream is = getUrlStreamHandler(url).openStream(url)) {
-            Path temp = Files.createTempFile(UUID.randomUUID().toString(), "." + type);
+            temp = Files.createTempFile(UUID.randomUUID().toString(), "." + type);
             Files.copy(is, temp, StandardCopyOption.REPLACE_EXISTING);
             RepoInstall cmd = new RepoInstall(temp.toString(), null);
             context.get().execute(cmd);
@@ -218,6 +233,15 @@ public class DefaultBaseXContainer implements BaseXContainer {
             throw new RuntimeException(e);
         } catch (UrlStreamHandler.UnresolvableUrlException e) {
             throw new RuntimeException(e);
+        }
+        finally {
+            if(temp != null){
+                try {
+                    Files.deleteIfExists(temp);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -227,10 +251,13 @@ public class DefaultBaseXContainer implements BaseXContainer {
     }
 
     @Override
-    public void provision(ProvisionOption... urls) throws BaseXContainerException {
+    public void provision(Option... urls) throws BaseXContainerException {
+
         Function<String, Boolean> handler = handleDocumentProvisionUrl(
                 handleRepositoryProvisionUrl((__) -> false));
-        for (UrlProvisionOption url : filter(UrlProvisionOption.class, urls)) {
+
+        for (ProvisionOption url : filter(ProvisionOption.class, urls)) {
+
             Boolean result = handler.apply(url.getURL());
             if (!result) {
                 throw new BaseXContainerException("can't handle url");
@@ -249,8 +276,9 @@ public class DefaultBaseXContainer implements BaseXContainer {
 
     @Override
     public void test(String url, OutputStream os) {
+        Path temp = null;
         try (InputStream is = getUrlStreamHandler(url).openStream(url)) {
-            Path temp = Files.createTempFile(UUID.randomUUID().toString(), ".xq");
+            temp = Files.createTempFile(UUID.randomUUID().toString(), ".xq");
             Files.copy(is, temp, StandardCopyOption.REPLACE_EXISTING);
             context.get().execute(new Test(temp.toString()), os);
         } catch (BaseXException e) {
@@ -260,6 +288,14 @@ public class DefaultBaseXContainer implements BaseXContainer {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        if(temp != null){
+            try {
+                Files.deleteIfExists(temp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @Override
@@ -267,6 +303,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
         if (context != null) {
             context.get().close();
         }
+        dropTempDirs();
     }
 
     private static Context createContext(Path path) {

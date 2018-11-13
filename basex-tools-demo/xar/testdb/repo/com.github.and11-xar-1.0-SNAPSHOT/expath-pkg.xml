@@ -1,0 +1,12 @@
+<package xmlns="http://expath.org/ns/pkg" name="com.github.and11-xar"
+	abbrev="xar"
+	spec="1.0"
+	version="1.0-SNAPSHOT">
+
+<title>	null</title>
+
+<xquery>
+	<namespace>urn:test.functions</namespace>
+	<file>my-functions.xqm</file>
+</xquery>
+</package>

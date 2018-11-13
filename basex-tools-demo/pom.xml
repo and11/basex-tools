@@ -9,14 +9,21 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <artifactId>basex-tools-demo</artifactId>
+
     <packaging>pom</packaging>
     <modules>
         <module>xar</module>
-        <module>xunit</module>
-        <module>db</module>
-        <module>schemas</module>
+        <module>database</module>
+        <module>common-schema</module>
+        <module>operations-schema</module>
         <module>xml</module>
+        <module>domain-schema</module>
     </modules>
 
 

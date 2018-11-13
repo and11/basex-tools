@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.Map;
 
@@ -85,12 +86,10 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
         if(artifact.getProperties() != null){
             String localPath = artifact.getProperties().get(ArtifactProperties.LOCAL_PATH);
             if(localPath != null){
-                System.out.println("LOCAL PAYJ FOUND");
                 return Files.newInputStream(new File(localPath).toPath());
             }
         }
-        System.out.println("ARTIFACT for url " + url + " is " + artifact);
-        System.out.println("FILE for " + url + " == " + artifact.getFile());
+
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(artifact);
             ArtifactResult artifactResult = repositorySystem

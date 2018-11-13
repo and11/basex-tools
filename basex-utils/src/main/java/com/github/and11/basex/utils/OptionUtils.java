@@ -25,12 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Utility methods related to {@link Option}s.
- *
- * @author Alin Dreghiciu (adreghiciu@gmail.com)
- * @since 0.3.0, December 08, 2008
- */
 public class OptionUtils
 {
 

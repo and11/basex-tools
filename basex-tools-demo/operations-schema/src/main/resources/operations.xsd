@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+           targetNamespace="http://my-schemas/operations/v1"
+           xmlns="http://my-schemas/operations/v1"
+           xmlns:this="http://my-schemas/operations/v1"
+           xmlns:common="http://my-schemas/common/v1"
+>
+
+    <xs:import namespace="http://my-schemas/common/v1" schemaLocation="common-schema.xsd"></xs:import>
+
+    <xs:element name="operations">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="this:operation" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="operation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:any processContents="strict" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attributeGroup ref="common:resource" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="endpoint">
+        <xs:complexType>
+            <xs:attribute ref="common:resourceRef"/>
+        </xs:complexType>
+    </xs:element>
+
+
+</xs:schema>
