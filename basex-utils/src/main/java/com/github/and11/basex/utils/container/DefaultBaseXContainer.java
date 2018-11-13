@@ -256,10 +256,13 @@ public class DefaultBaseXContainer implements BaseXContainer {
         Function<String, Boolean> handler = handleDocumentProvisionUrl(
                 handleRepositoryProvisionUrl((__) -> false));
 
-        for (ProvisionOption url : filter(ProvisionOption.class, urls)) {
-
+        ProvisionOption[] urlProvisionOptions = filter(ProvisionOption.class, urls);
+        System.out.println("provisioning options: " + Arrays.asList(urlProvisionOptions));
+        for (ProvisionOption url : urlProvisionOptions) {
+            System.out.println("provisioning: " + url);
             Boolean result = handler.apply(url.getURL());
             if (!result) {
+                System.out.println("provisioning failed");
                 throw new BaseXContainerException("can't handle url");
             }
         }
@@ -267,8 +270,6 @@ public class DefaultBaseXContainer implements BaseXContainer {
 
     @Override
     public void export(FunctionUrlReference function, OutputStream os) throws UrlStreamHandler.UnresolvableUrlException, IOException {
-        System.out.println("running function " + function);
-        System.out.println("url: " + function.getURL());
         try (InputStream is = getUrlStreamHandler(function.getURL()).openStream(function.getURL())) {
             IOUtils.copy(is, os);
         }

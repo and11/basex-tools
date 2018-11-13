@@ -5,6 +5,7 @@ import com.github.and11.basex.utils.BaseXContainer;
 import com.github.and11.basex.utils.CoreOptions;
 import com.github.and11.basex.utils.container.DefaultBaseXContainersFactory;
 import com.github.and11.basex.utils.options.InitializationOption;
+import com.github.and11.basex.utils.options.ProvisionOption;
 import com.github.and11.basex.utils.options.UrlProvisionOption;
 import com.github.and11.basex.utils.options.UrlReference;
 import org.apache.maven.plugin.AbstractMojo;
@@ -33,7 +34,7 @@ import static com.github.and11.basex.utils.CoreOptions.workingDirectory;
 @Mojo(name = "provision", requiresProject = true, threadSafe = true, defaultPhase = LifecyclePhase.PACKAGE)
 public class ProvisionMojo extends AbstractBaseXMojo {
 
-    @Parameter
+    @Parameter(required = true, readonly = true)
     private List<String> descriptors;
 
     @Component
@@ -44,7 +45,7 @@ public class ProvisionMojo extends AbstractBaseXMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        ArrayList<UrlReference> opts = new ArrayList<>();
+        ArrayList<ProvisionOption> opts = new ArrayList<>();
 
         MavenUrlResolver resolver = new MavenUrlResolver(mavenProject.getDependencies());
 
@@ -52,13 +53,12 @@ public class ProvisionMojo extends AbstractBaseXMojo {
                 resolver.resolve(descriptors).stream().map(CoreOptions::url).collect(Collectors.toList())
         );
 
-        System.out.println("PROVISIONING WITH NAME " + getDatabaseName());
         try (BaseXContainer container = new DefaultBaseXContainersFactory(getClass().getClassLoader())
                 .createContainer(
                         workingDirectory(getDatabaseDir().toPath()),
                         openDatabase(getDatabaseName()).collection(getDefaultCollection()))) {
 
-            container.provision(opts.toArray(new UrlProvisionOption[]{}));
+            container.provision(opts.toArray(new ProvisionOption[]{}));
 
         } catch (Exception e) {
             throw new MojoExecutionException("provisioning failed", e);

@@ -1,4 +1,0 @@
-<package xmlns="http://expath.org/ns/pkg">
-<jar>xar-1.0-SNAPSHOT.jar</jar>
-<class>my.test.MyTestClass</class>
-</package>

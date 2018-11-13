@@ -12,7 +12,6 @@
         <module>basex-junit</module>
         <module>basex-maven-plugin</module>
         <module>basex-utils</module>
-        <module>basex-tools-demo</module>
     </modules>
 
     <properties>

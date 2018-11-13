@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<op:operation
-        xmlns:common="http://my-schemas/common/v1"
-        xmlns:op="http://my-schemas/operations/v1" common:resource="1">
-
-</op:operation>
-
