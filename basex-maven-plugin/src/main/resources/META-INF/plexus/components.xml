@@ -97,6 +97,8 @@
                                 org.apache.maven.plugins:maven-compiler-plugin:3.7.0:testCompile
                             </test-compile>
                             <package>
+                                com.github.and11:basex-maven-plugin:${project.version}:create,
+                                com.github.and11:basex-maven-plugin:${project.version}:provision,
                                 com.github.and11:basex-maven-plugin:${project.version}:database
                             </package>
                             <install>
