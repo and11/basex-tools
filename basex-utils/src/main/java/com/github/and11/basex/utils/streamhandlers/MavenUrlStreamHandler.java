@@ -65,9 +65,6 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
         DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, extension, version);
         if(localPath != null){
             Map<String, String> props = Collections.singletonMap(ArtifactProperties.LOCAL_PATH, localPath);
-
-            System.out.println("" +
-                    "LOCAL PAYJU = " + localPath);
             return artifact.setProperties(props);
         }
 
@@ -150,6 +147,7 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
 
         String customSettings = System.getProperty( "maven.settings");
         if(customSettings != null){
+            System.out.println("using custom maven.settings path: " + customSettings);
             settingsBuildingRequest.setUserSettingsFile(new File(customSettings));
         }
 
