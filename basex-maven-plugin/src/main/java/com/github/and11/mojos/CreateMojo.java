@@ -34,7 +34,7 @@ public class CreateMojo extends AbstractBaseXMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        try (BaseXContainer container = new DefaultBaseXContainersFactory(getClass().getClassLoader())
+        try (BaseXContainer container = getBaseXContainersFactory()
                 .createContainer(
                         workingDirectory(getDatabaseDir().toPath()),
                         createDatabase(getDatabaseName()))) {

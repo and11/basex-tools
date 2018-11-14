@@ -53,7 +53,7 @@ public class ProvisionMojo extends AbstractBaseXMojo {
                 resolver.resolve(descriptors).stream().map(CoreOptions::url).collect(Collectors.toList())
         );
 
-        try (BaseXContainer container = new DefaultBaseXContainersFactory(getClass().getClassLoader())
+        try (BaseXContainer container = getBaseXContainersFactory()
                 .createContainer(
                         workingDirectory(getDatabaseDir().toPath()),
                         openDatabase(getDatabaseName()).collection(getDefaultCollection()))) {

@@ -45,7 +45,15 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
     public static final File DEFAULT_USER_SETTINGS_FILE = new File( userMavenConfigurationHome, "settings.xml" );
     public static final File DEFAULT_GLOBAL_SETTINGS_FILE =
             new File( System.getProperty( "maven.home", envM2Home != null ? envM2Home : "" ), "conf/settings.xml" );
+    private File mavenSettings;
 
+    public MavenUrlStreamHandler(File mavenSettings) {
+        this();
+        this.mavenSettings = mavenSettings;
+    }
+
+    public MavenUrlStreamHandler() {
+    }
 
     private static Artifact parseUrl(String pUrl) {
         System.out.println("URL::: " + pUrl);
@@ -120,7 +128,7 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
         return serviceLocator.getService(RepositorySystem.class);
     }
 
-    public static DefaultRepositorySystemSession getRepositorySystemSession(RepositorySystem system) {
+    public DefaultRepositorySystemSession getRepositorySystemSession(RepositorySystem system) {
         DefaultRepositorySystemSession repositorySystemSession = MavenRepositorySystemUtils
                 .newSession();
 
@@ -138,17 +146,24 @@ public class MavenUrlStreamHandler implements UrlStreamHandler {
         return repositorySystemSession;
     }
 
-    private static LocalRepository getLocalRepository() throws SettingsBuildingException {
+    private File getCustomSettings(){
+        String customSettings = System.getProperty( "maven.settings");
+        if(customSettings != null){
+            return new File(customSettings);
+        }
+        return mavenSettings;
+    }
+    private LocalRepository getLocalRepository() throws SettingsBuildingException {
 
         SettingsBuildingRequest settingsBuildingRequest = new DefaultSettingsBuildingRequest();
         settingsBuildingRequest.setSystemProperties(System.getProperties());
         settingsBuildingRequest.setUserSettingsFile(DEFAULT_USER_SETTINGS_FILE);
         settingsBuildingRequest.setGlobalSettingsFile(DEFAULT_GLOBAL_SETTINGS_FILE);
 
-        String customSettings = System.getProperty( "maven.settings");
+        File customSettings = getCustomSettings();
         if(customSettings != null){
             System.out.println("using custom maven.settings path: " + customSettings);
-            settingsBuildingRequest.setUserSettingsFile(new File(customSettings));
+            settingsBuildingRequest.setUserSettingsFile(customSettings);
         }
 
         SettingsBuildingResult settingsBuildingResult;
