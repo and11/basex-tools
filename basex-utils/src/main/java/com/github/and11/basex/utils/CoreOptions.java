@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static com.github.and11.basex.utils.OptionUtils.expand;
 
@@ -91,6 +92,10 @@ public class CoreOptions {
 
     public static CreateDatabaseOption createDatabase(String name){
         return new CreateDatabaseOption(name);
+    }
+
+    public static CreateDatabaseOption createDatabase(){
+        return new CreateDatabaseOption(UUID.randomUUID().toString());
     }
     public static OpenDatabaseOption openDatabase(String name){
         return new OpenDatabaseOption(name);

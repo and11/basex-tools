@@ -41,8 +41,7 @@ public class DatabaseMojo extends AbstractBaseXMojo {
             archiver.createArchive();
 
             if("basex".equals(mavenProject.getPackaging())){
-                mavenProject.setFile(artifactFile);
-                //projectHelper.attachArtifact(mavenProject, artifactFile, null);
+                mavenProject.getArtifact().setFile(artifactFile);
             }
 
         } catch (final Exception e) {

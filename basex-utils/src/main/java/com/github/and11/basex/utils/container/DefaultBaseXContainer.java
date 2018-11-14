@@ -64,6 +64,10 @@ public class DefaultBaseXContainer implements BaseXContainer {
         this.urlStreamHandler = new CompositeUrlStreamHandler(urlStreamHandler);
     }
 
+    private boolean isTemporary(Path path){
+        return tempdirs.contains(path);
+    }
+
     private void dropTempDirs(){
         for (Path tempdir : tempdirs) {
             try {
@@ -83,6 +87,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
     private void initializeContext() throws IOException {
         WorkingDirectoryOption workingDirectoryOption = extractOption(filter(WorkingDirectoryOption.class, options)).
                 orElse(workingDirectory(createTemporaryDirectory()));
+        System.out.println("working directory is " + workingDirectoryOption.getWorkingDirectory());
         context.getAndSet(new CloseableContext(createContext(workingDirectoryOption.getWorkingDirectory())));
         this.workingDirectory = workingDirectoryOption.getWorkingDirectory().toFile();
         urlStreamHandler.addHandler(new XQFunctionUrlStreamHandler(context.get()));
@@ -108,16 +113,15 @@ public class DefaultBaseXContainer implements BaseXContainer {
             throw new IllegalArgumentException("can't have more than one DatabaseOption");
         }
 
-        DatabaseOption option = options[0];
+        if(!isTemporary(workingDirectory.toPath()) && Files.exists(workingDirectory.toPath())){
+            throw new BaseXContainerException("directory " + workingDirectory + " already exists");
+        }
 
-        System.out.println("initialize DatabaseOption " + option.getDatabase().getURL());
-        System.out.println("WORKING DIR = " + workingDirectory);
+        DatabaseOption option = options[0];
 
         try (InputStream is = getUrlStreamHandler(option.getDatabase().getURL()).openStream(option.getDatabase().getURL());
         ) {
-            if(Files.exists(workingDirectory.toPath())){
-               throw new BaseXContainerException("directory " + workingDirectory + " already exists");
-            }
+            System.out.println("installing database " + option.getDatabase().getURL() + " into " + workingDirectory.toPath());
             Files.createDirectories(workingDirectory.toPath());
             ZipUtils.unzip(is, workingDirectory);
         } catch (UrlStreamHandler.UnresolvableUrlException e) {
@@ -139,6 +143,7 @@ public class DefaultBaseXContainer implements BaseXContainer {
         OpenDatabaseOption database = options[0];
         this.defaultCollection = database.getCollection();
         try {
+            System.out.println("opening database " + database.getDatabaseName());
             context.get().execute(new Open(database.getDatabaseName()));
         } catch (BaseXException e) {
             throw new BaseXContainerException(e);
@@ -152,7 +157,11 @@ public class DefaultBaseXContainer implements BaseXContainer {
 
         for (CreateDatabaseOption option : options) {
             try {
+                System.out.println("creating database " + option.getDatabaseName());
                 context.get().execute(new CreateDB(option.getDatabaseName()));
+                System.out.println("opening database " + option.getDatabaseName());
+                context.get().execute(new Open(option.getDatabaseName()));
+
             } catch (BaseXException e) {
                 throw new RuntimeException(e);
             }

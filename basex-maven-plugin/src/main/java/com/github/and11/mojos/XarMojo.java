@@ -108,7 +108,9 @@ public class XarMojo extends AbstractBaseXMojo {
             throw new MojoExecutionException("can't create archive", e);
         }
 
-        mavenProject.getArtifact().setFile(artifactFile);
+        if("xar".equals(mavenProject.getPackaging())) {
+            mavenProject.getArtifact().setFile(artifactFile);
+        }
     }
     private boolean projectHasJavaClasses() throws MojoExecutionException {
         try {

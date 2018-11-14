@@ -2,7 +2,9 @@ package com.github.and11.basex.utils.test;
 
 import com.github.and11.basex.utils.BaseXContainer;
 import com.github.and11.basex.utils.Option;
+import com.github.and11.basex.utils.OptionUtils;
 import com.github.and11.basex.utils.container.DefaultBaseXContainersFactory;
+import com.github.and11.basex.utils.options.InitializationOption;
 import com.github.and11.basex.utils.options.ProvisionOption;
 import com.github.and11.basex.utils.test.annotations.Configuration;
 import com.github.and11.basex.utils.test.annotations.Suites;
@@ -46,7 +48,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
     }
 
 
-    private List<Option> getConfigurationOptions(Class<?> testClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    private Option[] getConfigurationOptions(Class<?> testClass) throws IllegalAccessException, InstantiationException, InvocationTargetException {
         final Object testInstance = testClass.newInstance();
         Method[] methods = testClass.getDeclaredMethods();
         List<Option> options = new ArrayList<>();
@@ -64,7 +66,7 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
             }
         }
 
-        return options;
+        return options.toArray(new Option[options.size()]);
     }
 
     private String[] getTests(Class<?> testClass){
@@ -76,9 +78,9 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
     public XQUnitSuiteRunner(Class<?> testClass) throws InitializationError {
         super(null);
 
-        List<Option> options = new ArrayList<>();
+        Option[] options = null;
         try {
-            options.addAll(getConfigurationOptions(testClass));
+            options = getConfigurationOptions(testClass);
         } catch (Exception e) {
             throw new InitializationError(e);
         }
@@ -88,11 +90,10 @@ public class XQUnitSuiteRunner extends ParentRunner<XQUnitTestRunner> implements
         BaseXContainer container;
         try {
             container = new DefaultBaseXContainersFactory(testClass.getClassLoader()).createContainer(
-                    createDatabase("test"),
-                    openDatabase("test")
+                    OptionUtils.filter(InitializationOption.class, options)
             );
 
-            container.provision(options.toArray(new Option[options.size()]));
+            container.provision(options);
         } catch (BaseXContainer.BaseXContainerException e) {
             throw new RuntimeException(e);
         }
